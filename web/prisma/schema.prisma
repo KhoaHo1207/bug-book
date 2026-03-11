@@ -10,5 +10,31 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
+}
+
+model User {
+  id           String    @id
+  username     String    @unique
+  displayName  String
+  email        String?   @unique
+  passwordhash String?
+  googleId     String?   @unique
+  avatarUrl    String?
+  bio          String?
+  sessions     Session[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id
+  userId    String?
+  expiresAt DateTime
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
 }
